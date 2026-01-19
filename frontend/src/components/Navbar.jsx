@@ -1,9 +1,23 @@
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
     const navigate = useNavigate();
+
+    // Theme State
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+
+    // Apply Theme Effect
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    };
 
     const handleLogout = () => {
         logout();
@@ -13,11 +27,23 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <Link to="/" className="navbar-brand">
-                <span className="navbar-brand-icon">📋</span>
+                <span className="navbar-brand-icon">
+                    {theme === 'dark' ? '🌙' : '☀️'}
+                </span>
                 <span>TaskHub</span>
             </Link>
 
             <div className="navbar-nav">
+                {/* Theme Toggle Button */}
+                <button
+                    onClick={toggleTheme}
+                    className="btn btn-secondary btn-sm"
+                    style={{ fontSize: '1.2rem', padding: '0.4rem 0.8rem' }}
+                    title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                >
+                    {theme === 'dark' ? '☀️' : '🌙'}
+                </button>
+
                 {isAuthenticated ? (
                     <>
                         <div className="navbar-user">
